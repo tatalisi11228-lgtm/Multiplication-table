@@ -79,19 +79,28 @@
 #      (این یکی سخت‌تر است و به remove() نیاز دارد.)
 
 # کد خودت را از این‌جا بنویس
-raw = input("Enter your numbers: ").split()
+while True:
+    raw = input("> Enter your numbers(press enter to skip) : ").split()
 
-if len(raw)== 0:
-    print("You didn't enter anything")
-else:
+    if len(raw) == 0:
+        print("process stopped")
+        break
     numbers = []
     for item in raw:
-        numbers.append(int(item))
-
+        if item.isdigit():
+            numbers.append(int(item))
+        else:
+            print(f"skipping: {item}")
     unique = []
     for n in numbers:
         if n not in unique:
             unique.append(n)
 
-    print(unique)
-
+    print("Unique:", unique)
+    removed = len(numbers) - len(unique)
+    if removed == 1:
+        print(f"Removed: {removed} duplicate")
+    elif removed == 0:
+        print("No duplicate")
+    else:
+        print(f"Removed: {removed} duplicates")
