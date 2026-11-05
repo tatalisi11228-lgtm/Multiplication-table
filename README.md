@@ -262,3 +262,44 @@ Tools already learned: `input`, `print`, f-strings, `int`/`float`, `round`, `len
 `\n`, `%` (modulo), `isdigit`, `import random` + `random.randint`, string indexing,
 iteration, `.lower()` / `.strip()` / `.split()`, slicing, `append` / `join`, two pointers,
 flags, and the accumulator and counter patterns.
+
+**Exercise 14 — unique (remove duplicates, keep the order)**
+
+- `in` / `not in` ask a yes/no question about membership and return `True` / `False`. On a list they compare whole items; on a string they look for a piece of text: `"app" in fruits` is `False`, `"app" in "apple"` is `True`
+- A list accumulator starts as `[]` (like `0` for sums and `""` for text). It goes before the loop — inside, it is emptied every round, with no error
+- Unique-list algorithm: `if n not in unique: unique.append(n)`. The question is about `unique`, never about the original list — the original always contains the item, so nothing would ever be added
+- `append` changes the list in place and returns `None`: `unique = unique.append(n)` replaces the list with `None` and crashes next round with `AttributeError`
+- `isdigit()` asks "are all characters digits?" (`""` is `False`). `"-5"` and `"3.5"` fail it, because `-` and `.` are not digits — it accepts only non-negative whole numbers
+- A check needs an `if`: `number.isdigit() , numbers.append(...)` with a comma is two separate actions — the result of the check is thrown away (dead code again, as in exercises 10 and 12) and `append` always runs. The check must also use the loop variable (`item`), not a name that does not exist (`NameError`)
+- `int()` changes equality: `"01"`, `"1"` and `"001"` are three different strings but all become `1` — converting first and removing duplicates after gives a different answer from the other order
+- `input()` has to be inside `while True:` — outside, the variable never changes and the same result repeats forever (infinite loop; `Ctrl+C` stops it). A guard that ends in `break` needs no `else` after it
+- Two valid ways to handle a bad item: skip it with a message that shows the real item (`f"skipping: {item}"`, not fixed text), or stop everything with a flag. A flag is only needed for the second, and a flag line at the same indentation as the `if` runs for every item
+- Compute once, then use the name: `removed = len(numbers) - len(unique)` and `if removed == 1:` — not the same subtraction repeated in every condition. It comes after the loop that builds `unique`, and uses `numbers`, not `raw`: skipped invalid items are not removed duplicates
+- Singular/plural once more, with three cases: 0 gets its own message ("No duplicates"), 1 is singular, 2 or more is plural
+- The test shapes that mattered: `1 2 x 2` (a bad item between good ones), `-5 3` and `3.5 2` (the limits of `isdigit`), and an empty line
+- Style: 4 spaces per indent level, spaces around `==`; Shift+Alt+F formats the file in VS Code
+
+Exercise 15 — word frequency (first dict)
+
+- A dict maps keys to values: `counts = {}`, `counts["apple"] = 1`, read with `counts["apple"]`. A missing key is `KeyError: 'cherry'`, like `IndexError` for lists. `in` checks the keys: `"cherry" in counts`
+- Updating is the accumulator pattern with a key: `counts[word] = counts[word] + 1` reads the old value and writes the new one
+- Counting algorithm: `if word in counts:` add 1, `else:` first sighting, `counts[word] = 1`. The first-time value is a number — the count so far — not the word (`= word`, later `"the" + 1` is a `TypeError`) and not the dict itself (`= counts`, later `dict + 1` is a `TypeError`). When unsure, trace `the cat the` by hand instead of guessing
+- `for word in counts:` walks the keys; `counts[word]` is the value. Keys come in the order of first appearance
+- A loop takes its items from whatever comes after `in`: `for word in counts:` over an empty dict runs zero rounds, so `word` never exists (`NameError`). Counting loops over the list `words`; printing loops over the dict `counts`. A `print` outside every loop runs once and shows only the last word
+- A line ending in `:` needs an indented body (`IndentationError`, before even one line runs), and `else` must line up exactly with its `if`
+- `split(x)` and `strip(x)` are different tools: `split(".,!?")` cuts only where that whole 5-character text appears (almost never); `strip(".,!?")` removes any of those characters from the start and end of one word and leaves the middle alone (`don't`). `strip` works on a single word, after `split()`
+- `"".split(",")` is `['']`, not `[]`. Only `split()` with no argument gives an empty list for empty text — the guard `len(words) == 0` relies on it
+- `word.strip(...)` returns a new string — it has to be stored (`word = word.strip(...)`) or it is thrown away
+- Clean the data once, at the start, before the keys are built: `.lower()` before `.split()` (`.lower()` is a string method, so `.split().lower()` is an `AttributeError`) and `strip` inside the counting loop, before the `if`. Cleaning only inside the `print` changes the display and not the counts: `Hello, hello!!` still made two keys. To show the original case, keep the original text (exercise 11)
+- The test that exposed it was a word repeated with different punctuation; `the cat, the dog!` passed even with the bug. Test shapes, not just values
+- Champion with a dict: `best_word = ""`, `best_count = 0`, `if counts[word] > best_count:` then update both. `0` is a safe start because every count is at least 1 (in exercise 13 numbers could be negative). The champion needs its own name — `word` is overwritten every round (exercise 7). `>` keeps the first word on a tie, `>=` the last
+- Where a variable is created depends on which loop it must survive: `counts = {}` before the `for` loop (survives its rounds) but inside `while True:` (fresh for every sentence); `input` inside `while True:` (it must repeat)
+- Edge case: `!!!` strips to `""`, an empty key. `if word == "": continue` skips it
+
+## Where we stopped
+
+**2026-11-05. Exercises 01–15 are done. Stage 5 (lists and dicts) is under way. Next:**
+
+ 16 — the dict method `.get()` (turns the if/else counter into one line), then a small phone book: add names and look them up.
+
+New tools: `in` / `not in`, dict basics (`{}`, `d[key]`, `KeyError`, looping over keys), `strip(chars)`.
