@@ -279,7 +279,7 @@ flags, and the accumulator and counter patterns.
 - The test shapes that mattered: `1 2 x 2` (a bad item between good ones), `-5 3` and `3.5 2` (the limits of `isdigit`), and an empty line
 - Style: 4 spaces per indent level, spaces around `==`; Shift+Alt+F formats the file in VS Code
 
-Exercise 15 — word frequency (first dict)
+**Exercise 15 — word frequency (first dict)**
 
 - A dict maps keys to values: `counts = {}`, `counts["apple"] = 1`, read with `counts["apple"]`. A missing key is `KeyError: 'cherry'`, like `IndexError` for lists. `in` checks the keys: `"cherry" in counts`
 - Updating is the accumulator pattern with a key: `counts[word] = counts[word] + 1` reads the old value and writes the new one
