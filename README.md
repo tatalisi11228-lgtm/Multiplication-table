@@ -29,11 +29,11 @@ Stage 4 — Strings
  12_word_count.py — count words in a sentence ✅
 Stage 5 — Lists and dicts
  13_max_no_builtin.py — find the maximum without max() ✅
- 14_unique.py — remove duplicates, keep order
- 15_frequency.py — count each word's occurrences
+ 14_unique.py — remove duplicates, keep order ✅
+ 15_frequency.py — count each word's occurrences ✅
 Stage 6 — Functions
- 16_refactor.py — rewrite earlier exercises as functions
- 17_primes.py — print primes up to N
+ 16_refactor.py — rewrite earlier exercises as functions ✅
+ 17_primes.py — print primes up to N ✅
  18_calculator.py — a menu-driven calculator
 Stage 7 — Files and structure
  19_save_load.py — write data to a file, read it back
@@ -252,3 +252,44 @@ Where we stopped
 17 — the dict method .get() (turns the if/else counter from 15 into one line, and is the safe alternative to KeyError when reading a key that may be missing).
 
 New tools: d[key] = value (add or replace), .items() with unpacking, in on dict keys, if not contacts: for an empty dict, while x not in (...) for validation, set().
+
+Exercise 17 — .get() (one-line counter and safe lookup)
+
+d.get(key) reads a value like d[key], but a missing key gives None instead of KeyError. d.get(key, default) gives the default instead of None. ages["reza"] crashes, ages.get("reza") prints None, ages.get("reza", 0) prints 0
+.get takes two separate pieces, the key and then the default, split by a comma and both outside any quotes. .get("reza, 0") is ONE text — a 7-character key that is not in the dict — so it printed None instead of 0, with no error
+A key alone is not a default: counts.get(0) looks for a key named 0 and gives None. The key comes first, the default second
+A line whose result is neither printed nor stored is dead code: counts.get("the", 0) on its own shows nothing (the same mistake as in exercises 10, 12 and 14)
+Quotes decide what is looked up: .get("the", 0) always looks up the literal text the, so every search showed the count of the. .get(word, 0) looks up whatever is inside the variable. Only a test with a word that is not there (bird) exposed it
+Reusing the same kind of quote inside an f-string (f"{counts.get("the", 0)}") only works on Python 3.12+. With a variable and no quotes the problem does not exist
+The one-line counter: counts[word] = counts.get(word, 0) + 1. .get gives "the count so far" (0 for a new word, the real count otherwise) and + 1 stores the new count. The four lines of if word in counts / else from exercise 15 become one
+[] reads, .get reads safely: counts[word.strip()] on an empty dict is a KeyError. Cleaning is word = word.strip(...), stored, on its own line before the counting line
+.strip() with empty () removes only whitespace; the punctuation has to go inside, as one text
+Same mistake as in exercise 15: split(",.!/?:") cuts only where that whole text appears, so "The cat, the dog!" stayed ONE word (the cat, the dog: 1). split() with no argument, then strip(...) on each word
+Which one to use: counts[word] when the key is certain (the printing loop — the keys come from counts itself), counts.get(word, 0) when it may be missing (the counting line and the search)
+Clean the search the same way as the data (.lower().strip(...)): "hello?" finds hello. Use the same characters in both strips, or the lookup misses
+
+The empty check
+
+The guard has to look at the result of the cleaning, not at the raw input. if not words: passed for !!!, because split() gave ['!!!'], a full list. The word only becomes empty after strip, inside the loop. Nothing was counted, nothing was printed, and the program still asked "Which word?" (a silent bug, exercise 4 again)
+The check goes after the counting loop and tests counts: if not counts:. One test catches !!!, an empty line and a line of spaces. With no words the loop runs zero rounds and counts stays {}
+Moving code means deleting the old copy. The counting loop was copied above the if, but the old one stayed inside the else, so every word was counted twice (the: 4, cat: 2, dog: 2) — no error, only doubled numbers (a silent bug, exercise 8 again)
+while True: with a break only in the empty branch asked the questions again and again (an infinite loop). One sentence and one question need no loop
+if word: counting does the same as if not word: continue, in fewer lines
+
+Challenge — count the letters of one word
+
+for letter in word: walks the characters (exercise 10); the counting line is the same one-liner with letter as the key. Its own dict gets its own name, letters, not counts
+A line that is never used is noise: counts = {} was created and never touched
+if letter: inside a loop over characters is always true, because a character is never empty. The question "was anything counted?" belongs to the result, after the loop: if not letters:
+A print inside the counting loop shows running totals (b: 1, a: 1, n: 1, a: 2, n: 2, a: 3), not the final counts. The final answer wants its own loop after counting (exercise 10). An empty check inside the loop never runs either: an empty word means zero rounds, so no message and no error. Counting and printing are two jobs, so two loops, with the check between them
+isdigit() asks "is this a digit?". Used with continue it skipped the digits and left spaces and commas in. isalpha() asks "is this a letter?": if letter.isalpha(): counts only letters, so "ban ana", "a,b,a" and "a1b2a" all come out clean. strip only trims the two ends of a text, never the middle
+The test shapes that mattered: !!! (a full list before cleaning, an empty dict after), The cat, the dog! (showed the doubled count), a word that is not there (bird, exposed .get("the", 0)), an empty line and a line of spaces, Hello, hello!! HELLO (one key, hello: 3), banana and Banana, ban ana, a,b,a and a1b2a
+Style: 8 spaces inside one branch again (it ran, but looked like a different block). Shift+Alt+F formats the file in VS Code
+
+Where we stopped
+
+2026-11-09. Exercises 01–17 are done, challenge included. Stage 5 (lists and dicts) is under way. Next:
+
+18 — not chosen yet. The track list at the top still has the original names for 16–18 (16 became the phone book, 17 became .get()), so the first step next session is to decide: continue with Stage 6 (functions) from 18_calculator.py, or one more dict exercise first.
+
+New tools: d.get(key) and d.get(key, default), the one-line counter counts[word] = counts.get(word, 0) + 1, the empty check on the result after the loop (if not counts:), str.isalpha(), for letter in word: to count characters.
