@@ -34,7 +34,7 @@ Stage 5 — Lists and dicts
 Stage 6 — Functions
  16_refactor.py — rewrite earlier exercises as functions ✅
  17_primes.py — print primes up to N ✅
- 18_calculator.py — a menu-driven calculator
+ 18_calculator.py — a menu-driven calculator ✅
 Stage 7 — Files and structure
  19_save_load.py — write data to a file, read it back
  20_todo.py — a small to-do list app that persists
@@ -293,3 +293,19 @@ Where we stopped
 18 — not chosen yet. The track list at the top still has the original names for 16–18 (16 became the phone book, 17 became .get()), so the first step next session is to decide: continue with Stage 6 (functions) from 18_calculator.py, or one more dict exercise first.
 
 New tools: d.get(key) and d.get(key, default), the one-line counter counts[word] = counts.get(word, 0) + 1, the empty check on the result after the loop (if not counts:), str.isalpha(), for letter in word: to count characters.
+
+Exercise 18 — menu-driven calculator (Stage 6 begins: functions)
+
+def add(a, b): defines a function. The indented body does nothing until the function is called: result = add(2, 3). Defining and calling are two different steps Parameters (a, b) are names that receive the values passed in the call. They are the function's own boxes: the a and b inside the function are separate from any a and b in the main program return hands a value back so it can be stored (result = add(a, b)); print only shows it and returns nothing. A function that prints cannot be reused for anything else, so the calculation functions only calculate, and input / print stay in the main program Definitions go once at the top of the file, outside the loop. Defined inside the while loop or inside an if branch they are rebuilt every round: it runs, but it is the wrong place A guard in the caller is not a safe function: the zero check in the main program protects that one call, while divide(5, 0) on its own still crashes with ZeroDivisionError. The guard belongs inside the function: if b == 0: return None None means "no value". The caller asks if result is None: (error message) else: (the equation). Use is None, not == 0 — 0 is a valid answer (divide(0, 5)) A check that can never fail is dead code: if result is not None: was always true while divide never returned None (the same family as the dead branches in exercise 5) elif choice == "5": after if choice == "5": break can never run, and anything written after a break in the same block is skipped. The goodbye message goes before the break A forgotten result = add(a, b) is a silent bug: print shows the result of the previous round, and on the very first round a NameError. Test 3 and then 1 IndentationError: an indent that matches no outer level (an 8 under a 12 under a 4) stops the whole file before any line runs, so even the menu never appears. 4 spaces per level; Shift+Alt+F formats the file Typing a name like choice or name in VS Code can add a stray import at the top (from secrets import choice, from unicodedata import name). Esc closes the suggestion list; delete the line The test shapes that mattered: 3 then 1, a zero divisor from the menu and divide(5, 0) called directly, 5 as the very first choice, 7 and abc, negative numbers, decimals
+
+Challenge — ask_number(prompt)
+
+A parameter can be text: the function receives the question and returns a number. Two float(input(...)) lines became two calls of one function: ask_number("Enter first number: ") Reading numbers in one place means a later check for abc changes one function, not every call float() already ignores spaces at both ends, so float(" 3 ") works and .strip() inside is not needed choice stays text and does not go through ask_number: it is compared with "1" to "5", not calculated with number1 and number2 say more than a and b. Parentheses in the output keep negatives readable: (-6.0) / (3.0) A challenge is added on top of the finished version, one change at a time. Rewriting the file dropped the four functions and put the calculations back inline: the program still worked, but the exercise itself went a step back Final shape: five definitions at the top, then one loop that only calls them. Tests that passed: 3 then 1, a zero divisor from the menu, divide(5, 0) called directly (None), divide(0, 5) (0.0), 5 first, 7, abc, negatives, decimals
+
+Where we stopped
+
+2026-11-09. Exercises 01–18 are done, challenge included. Stage 6 (functions) is under way. The final calculator has five definitions at the top (add, subtract, multiply, divide, ask_number) and a loop that only calls them; divide returns None for b == 0 and is safe on its own. Next:
+
+Decide the next step: the two exercises that were not placed (rewrite an earlier exercise as functions, print primes up to N) or Stage 7 (files: 19_save_load.py). The first one is the natural next move, because it practises the same def / return pattern on code that already exists.
+
+New tools: def, parameters and return, calling a function, return None and is None, a function with a text parameter (ask_number), the exit message before break.
