@@ -31,10 +31,12 @@ Stage 5 — Lists and dicts
  13_max_no_builtin.py — find the maximum without max() ✅
  14_unique.py — remove duplicates, keep order ✅
  15_frequency.py — count each word's occurrences ✅
+ 16 — phone book (dict: add and look up) ✅
+ 17_get.py — .get(): one-line counter and safe lookup ✅
 Stage 6 — Functions
- 16_refactor.py — rewrite earlier exercises as functions ✅
- 17_primes.py — print primes up to N ✅
- 18_calculator.py — a menu-driven calculator ✅
+ 18_calculator.py — a menu-driven calculator, with functions ✅
+ 18b_refactor.py — the word counter from 17, rewritten as functions ✅
+ Not placed yet: print primes up to N
 Stage 7 — Files and structure
  19_save_load.py — write data to a file, read it back
  20_todo.py — a small to-do list app that persists
@@ -296,11 +298,28 @@ New tools: d.get(key) and d.get(key, default), the one-line counter counts[word]
 
 Exercise 18 — menu-driven calculator (Stage 6 begins: functions)
 
-def add(a, b): defines a function. The indented body does nothing until the function is called: result = add(2, 3). Defining and calling are two different steps Parameters (a, b) are names that receive the values passed in the call. They are the function's own boxes: the a and b inside the function are separate from any a and b in the main program return hands a value back so it can be stored (result = add(a, b)); print only shows it and returns nothing. A function that prints cannot be reused for anything else, so the calculation functions only calculate, and input / print stay in the main program Definitions go once at the top of the file, outside the loop. Defined inside the while loop or inside an if branch they are rebuilt every round: it runs, but it is the wrong place A guard in the caller is not a safe function: the zero check in the main program protects that one call, while divide(5, 0) on its own still crashes with ZeroDivisionError. The guard belongs inside the function: if b == 0: return None None means "no value". The caller asks if result is None: (error message) else: (the equation). Use is None, not == 0 — 0 is a valid answer (divide(0, 5)) A check that can never fail is dead code: if result is not None: was always true while divide never returned None (the same family as the dead branches in exercise 5) elif choice == "5": after if choice == "5": break can never run, and anything written after a break in the same block is skipped. The goodbye message goes before the break A forgotten result = add(a, b) is a silent bug: print shows the result of the previous round, and on the very first round a NameError. Test 3 and then 1 IndentationError: an indent that matches no outer level (an 8 under a 12 under a 4) stops the whole file before any line runs, so even the menu never appears. 4 spaces per level; Shift+Alt+F formats the file Typing a name like choice or name in VS Code can add a stray import at the top (from secrets import choice, from unicodedata import name). Esc closes the suggestion list; delete the line The test shapes that mattered: 3 then 1, a zero divisor from the menu and divide(5, 0) called directly, 5 as the very first choice, 7 and abc, negative numbers, decimals
+def add(a, b): defines a function. The indented body does nothing until the function is called: result = add(2, 3). Defining and calling are two different steps
+Parameters (a, b) are names that receive the values passed in the call. They are the function's own boxes: the a and b inside the function are separate from any a and b in the main program
+return hands a value back so it can be stored (result = add(a, b)); print only shows it and returns nothing. A function that prints cannot be reused for anything else, so the calculation functions only calculate, and input / print stay in the main program
+Definitions go once at the top of the file, outside the loop. Defined inside the while loop or inside an if branch they are rebuilt every round: it runs, but it is the wrong place
+A guard in the caller is not a safe function: the zero check in the main program protects that one call, while divide(5, 0) on its own still crashes with ZeroDivisionError. The guard belongs inside the function: if b == 0: return None
+None means "no value". The caller asks if result is None: (error message) else: (the equation). Use is None, not == 0 — 0 is a valid answer (divide(0, 5))
+A check that can never fail is dead code: if result is not None: was always true while divide never returned None (the same family as the dead branches in exercise 5)
+elif choice == "5": after if choice == "5": break can never run, and anything written after a break in the same block is skipped. The goodbye message goes before the break
+A forgotten result = add(a, b) is a silent bug: print shows the result of the previous round, and on the very first round a NameError. Test 3 and then 1
+IndentationError: an indent that matches no outer level (an 8 under a 12 under a 4) stops the whole file before any line runs, so even the menu never appears. 4 spaces per level; Shift+Alt+F formats the file
+Typing a name like choice or name in VS Code can add a stray import at the top (from secrets import choice, from unicodedata import name). Esc closes the suggestion list; delete the line
+The test shapes that mattered: 3 then 1, a zero divisor from the menu and divide(5, 0) called directly, 5 as the very first choice, 7 and abc, negative numbers, decimals
 
 Challenge — ask_number(prompt)
 
-A parameter can be text: the function receives the question and returns a number. Two float(input(...)) lines became two calls of one function: ask_number("Enter first number: ") Reading numbers in one place means a later check for abc changes one function, not every call float() already ignores spaces at both ends, so float(" 3 ") works and .strip() inside is not needed choice stays text and does not go through ask_number: it is compared with "1" to "5", not calculated with number1 and number2 say more than a and b. Parentheses in the output keep negatives readable: (-6.0) / (3.0) A challenge is added on top of the finished version, one change at a time. Rewriting the file dropped the four functions and put the calculations back inline: the program still worked, but the exercise itself went a step back Final shape: five definitions at the top, then one loop that only calls them. Tests that passed: 3 then 1, a zero divisor from the menu, divide(5, 0) called directly (None), divide(0, 5) (0.0), 5 first, 7, abc, negatives, decimals
+A parameter can be text: the function receives the question and returns a number. Two float(input(...)) lines became two calls of one function: ask_number("Enter first number: ")
+Reading numbers in one place means a later check for abc changes one function, not every call
+float() already ignores spaces at both ends, so float(" 3 ") works and .strip() inside is not needed
+choice stays text and does not go through ask_number: it is compared with "1" to "5", not calculated with
+number1 and number2 say more than a and b. Parentheses in the output keep negatives readable: (-6.0) / (3.0)
+A challenge is added on top of the finished version, one change at a time. Rewriting the file dropped the four functions and put the calculations back inline: the program still worked, but the exercise itself went a step back
+Final shape: five definitions at the top, then one loop that only calls them. Tests that passed: 3 then 1, a zero divisor from the menu, divide(5, 0) called directly (None), divide(0, 5) (0.0), 5 first, 7, abc, negatives, decimals
 
 Where we stopped
 
@@ -309,3 +328,30 @@ Where we stopped
 Decide the next step: the two exercises that were not placed (rewrite an earlier exercise as functions, print primes up to N) or Stage 7 (files: 19_save_load.py). The first one is the natural next move, because it practises the same def / return pattern on code that already exists.
 
 New tools: def, parameters and return, calling a function, return None and is None, a function with a text parameter (ask_number), the exit message before break.
+
+Exercise 18b — the word counter rewritten with functions (refactoring)
+
+Refactoring means the same behaviour with a new structure: one job per function (clean, count_words, most_common), and the main part only asks, calls and prints. Nothing is counted or cleaned outside the functions
+Data flows from function to function: clean(text) gives a list, count_words(words) gives a dict, most_common(counts) gives (word, count). The output of one is the input of the next: count_words(clean(sentence))
+Everything a function needs comes in through its parameters. A loop over the outer variable sentence inside clean ignored the text that was passed in, so clean("Hello. hello!!") did not test what was written
+A function that calls itself by accident never ends: word = clean(word) inside clean gave RecursionError: maximum recursion depth exceeded. Cleaning one word is word.strip(...)
+One job per function: counting lines inside clean mixed two jobs. A line like counts[word] = counts = {} .words.append(word) is evaluated on the right first and fails with AttributeError: 'dict' object has no attribute 'words'
+The box (words = [], counts = {}) is created INSIDE the function, so every call starts fresh, and return comes after the loop, level with the for
+Order of string methods: text.lower().split() — lower() is a string method, so text.split().lower() is AttributeError: 'list' object has no attribute 'lower'. text.strip() where split() belongs makes the loop walk characters, not words. split() already ignores spaces at both ends
+Test every function alone before wiring them together. clean(clean(x)) hands a list to a function that expects text
+A function that passed its tests is not touched while the next one is written: clean was broken three times by edits made for other reasons
+Returning two values: return best_word, best_count, and best_word, best_count = most_common(counts) unpacks them — the same unpacking as for name, number in contacts.items()
+Champion start: best_word = None, best_count = 0. An empty dict runs zero rounds and returns (None, 0) with no separate if; > keeps the first word on a tie
+The empty check stays on the result: if not counts: catches !!!, an empty line and a line of spaces
+Refactoring must keep the behaviour: the first version dropped the Which word? search from exercise 17. A rewrite is checked against the original, feature by feature
+The searched word is cleaned the same way as the data (.lower().strip(...)) and read with counts.get(search, 0), so hello?, HELLO and bird (0) all work
+The test shapes that mattered: !!!, an empty line, a line of spaces, Hello, hello!! HELLO, The cat, the dog!, a tie (a b), a single word, and a search for hello?, HELLO, bird, an empty word and !!!
+Style: two blank lines between functions (PEP 8); Shift+Alt+F formats the file
+
+Where we stopped
+
+2026-11-09. Exercises 01–18 and 18b are done. Stage 6 (functions) is under way: a menu calculator with five functions, and the word counter split into three functions plus a main part. Next:
+
+Decide between the last unplaced exercise (print primes up to N, where a function like is_prime(n) that answers yes or no is the natural shape) and Stage 7 (files: 19_save_load.py).
+
+New tools: functions that take and return lists and dicts, chaining functions (count_words(clean(sentence))), returning two values and unpacking them, RecursionError, the rule "parameters in, return out", one job per function.
