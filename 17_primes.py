@@ -54,7 +54,6 @@ else:
     for word, count in counts.items():
         print(f"{word}: {count}")
 
-    # Part 3 — look up a word safely
     search = input("> Which word? ").lower().strip(",.!/'?:")
     if not search:
         print("No word entered.")
