@@ -40,13 +40,23 @@
 # Stuck? Ask for a hint, not the answer.
 
 # Part 2 — count words
-word = input("> ").lower().strip(".,!?;:()[]{}\"'")
-letters = {}
-for letter in word:
-    if letter.isalpha():
-        letters[letter] = letters.get(letter, 0) + 1
-if not letters:
-    print("No letters entered.")
+sentence = input("> Enter a sentence: ")
+counts = {}
+
+for word in sentence.lower().split():
+    word = word.strip(",.!/'?:")
+    if word:
+        counts[word] = counts.get(word, 0) + 1
+
+if not counts:
+    print("No words entered.")
 else:
-    for letter in letters:
-        print(f"{letter}: {letters[letter]}")
+    for word, count in counts.items():
+        print(f"{word}: {count}")
+
+    # Part 3 — look up a word safely
+    search = input("> Which word? ").lower().strip(",.!/'?:")
+    if not search:
+        print("No word entered.")
+    else:
+        print(f"{search}: {counts.get(search, 0)}")
