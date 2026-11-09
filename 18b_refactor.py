@@ -23,7 +23,6 @@ def most_common(counts):
             best_count = counts[word]
     return best_word, best_count
 
-
 sentence = input("> Enter a sentence: ")
 words = clean(sentence)
 counts = count_words(words)
