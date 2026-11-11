@@ -355,3 +355,60 @@ Where we stopped
 Decide between the last unplaced exercise (print primes up to N, where a function like is_prime(n) that answers yes or no is the natural shape) and Stage 7 (files: 19_save_load.py).
 
 New tools: functions that take and return lists and dicts, chaining functions (count_words(clean(sentence))), returning two values and unpacking them, RecursionError, the rule "parameters in, return out", one job per function.
+
+README update — 18c and 18d
+
+Two edits: (1) swap one line in the Track list, (2) paste everything under "PASTE AT THE END" at the bottom of the file.
+
+
+1) TRACK LIST — Stage 6
+
+Replace the line:
+
+Not placed yet: print primes up to N
+
+with these two lines (same format as the 18b line above them):
+
+18c_primes.py — print the primes up to N, with input validation ✅
+18d_sieve.py — the same task with the Sieve of Eratosthenes, timed ✅
+
+
+2) PASTE AT THE END (after the 18b "Where we stopped" block)
+
+Exercise 18c — primes up to N (a function that uses another function)
+
+- is_prime(n) answers yes or no: n <= 1 is False at once (0, 1 and negatives), any n % i == 0 returns False at once, and return True comes after the loop, level with the for. Inside the loop it would answer True after the first divisor that does not fit
+- Only the divisors up to the square root are tested: if n = a × b, one of the two factors is at most the square root. n**0.5 is a float, so int(...) for range, and + 1 because range excludes its end (4 needs range(2, 3)). For 2 and 3 the range is empty and the loop never runs, so the answer is True
+- primes_up_to(n) is the list accumulator again: primes = [] before the loop, if is_prime(i): primes.append(i) inside, return after it. One function built on another: the loop asks, is_prime answers
+- Return the list, do not print inside: the caller decides what to do with it (print it, len, an empty check). The primes inside the function and the primes outside are two separate variables, even with the same name
+- The same list was printed in both branches of the if/else. Compute once before the if, print the verdict in the if/else, print the list once after it. 12 spaces in one branch and 8 in the other ran, but looked like different blocks
+- print(primes) shows [2, 3, 5, 7]: a list prints in its own format, with brackets and commas. print(*primes, sep=", ") unpacks the items and puts its own separator between them. end=", " after each item leaves a comma after the last one too
+- Input guard: text = input(...).strip(), if not text.isdigit(): a message and continue, then number = int(text). isdigit rejects negatives and decimals. text holds the string and number the integer — the names were first swapped
+- while True: with break on an empty line (the exit message goes before the break) and continue for invalid input
+- Three cases for the message: 0 primes, 1 prime (singular), 2 or more (plural). 0 and 1 get "no prime numbers" and not an empty []. The two branches have to end the same way (is: and are:)
+- The tests that mattered: 2, 3, 4 (the square root itself), 1, 0, 10, 29, abc, an empty line, -5
+
+Exercise 18d — Sieve of Eratosthenes (the challenge)
+
+- Idea: do not test every number. Cross off the multiples of each prime and keep what is never crossed off — each multiple is crossed once, with no division
+- A list of flags where the index is the number and the value says "still prime": flags = [True] * (n + 1). n + 1 cells, so the index n exists; flags[0] and flags[1] are set to False. "Crossing off" 4 is flags[4] = False
+- flags[0 and 1] = False is only flags[0] = False: 0 and 1 is one expression that evaluates to 0, so flags[1] stayed True. Two lines
+- Ask the list, not the number: if flags[i]: — i is True is never true, because i is a number
+- range has a third argument, the step: range(i * i, n + 1, i) walks the multiples. Square brackets take ONE index: flags[a, b, c] is a tuple (TypeError: list indices must be integers or slices, not tuple), so the range goes in a for loop and each round does flags[j] = False
+- The outer loop only goes up to the square root of n (same reason as in is_prime), and the crossing off starts at i * i, because the smaller multiples were already crossed off by smaller primes
+- After the sieve: a loop collects the indices that are still True into primes, and the function returns that list (the first version still returned True)
+- Guard n < 2 with return [] first: flags[1] on a one-cell list is an IndexError
+- The sieve replaces is_prime and primes_up_to, it does not stand next to them. A function that builds a list was still called is_prime, and the old primes_up_to(primes) call gave TypeError: can only concatenate list (not "int") to list. The name says the job: sieve(n)
+- Is it prime? number in primes (in on a list) replaces the is_prime(number) call
+- Four error messages, four meanings: can only concatenate str (not "int") to str (input() not converted), 'str' object cannot be interpreted as an integer (text handed to range), the tuple error above, and list + int (n was a list). Read the last line for the cause and the File / line lines above it for who made the call; print(type(n)) shows what n really is
+- Timing: import time at the top, start = time.time() and elapsed = time.time() - start around the call only (not the input, not the print), shown with :.2f
+- Why it is fast: the old way divides for every number, up to its square root; the sieve crosses off every multiple once. The price is memory (n + 1 flags), and for one single number is_prime is still the better tool
+- For a long result print len(primes) and primes[-5:], not the whole list. Ten million has 664,579 primes, which is also a quick correctness check
+
+Where we stopped
+
+2026-11-11. Exercises 01–18, 18b, 18c and 18d are done. Stage 6 (functions) is complete: the menu calculator, the word counter split into functions, and the primes up to N, first with is_prime and then with the sieve. Next:
+
+Stage 7 (files): 19_save_load.py — write data to a file and read it back, then 20_todo.py, a small to-do list app that keeps its data between runs.
+
+New tools: a function that calls another function, the square-root limit, the sieve (a list of True/False flags indexed by the number), range(start, stop, step), print(*items, sep=", "), the input guard with isdigit + continue, in on a list, if n < 2: return [], time.time().
