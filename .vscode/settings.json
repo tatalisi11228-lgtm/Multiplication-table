@@ -16,5 +16,6 @@
   // Save behaviour
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-  "editor.formatOnSave": false
+  "editor.formatOnSave": false,
+  "python-envs.defaultEnvManager": "ms-python.python:system"
 }
