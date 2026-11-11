@@ -36,6 +36,8 @@ Stage 5 — Lists and dicts
 Stage 6 — Functions
  18_calculator.py — a menu-driven calculator, with functions ✅
  18b_refactor.py — the word counter from 17, rewritten as functions ✅
+ 18c_primes.py — print the primes up to N, with input validation ✅
+ 18d_sieve.py — the same task with the Sieve of Eratosthenes, timed ✅
  Not placed yet: print primes up to N
 Stage 7 — Files and structure
  19_save_load.py — write data to a file, read it back
