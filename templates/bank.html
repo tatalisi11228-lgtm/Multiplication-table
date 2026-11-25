@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA BANK | Dashboard</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #10131c;
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            color: #65d6a6;
+        }
+
+        .account {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .logout {
+            color: #e87979;
+            text-decoration: none;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #174c45, #172b3c);
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .balance-card p {
+            color: #c5d8d2;
+            margin-bottom: 15px;
+        }
+
+        .balance {
+            font-size: 42px;
+            font-weight: bold;
+        }
+
+        .currency {
+            font-size: 18px;
+            color: #c5d8d2;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: #1b202d;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #303747;
+            margin-bottom: 30px;
+        }
+
+        .action-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .action-card p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .deposit {
+            background: #65d6a6;
+            color: #10231c;
+        }
+
+        .withdraw {
+            background: #e87979;
+            color: #281313;
+        }
+
+        .money-input {
+            width: 100%;
+            padding: 13px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #303747;
+            background: #10131c;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .money-input:focus {
+            border-color: #65d6a6;
+        }
+
+        .transactions {
+            background: #1b202d;
+            border: 1px solid #303747;
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .transactions h2 {
+            margin-bottom: 20px;
+        }
+
+        .transaction-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #303747;
+        }
+
+        .empty {
+            color: #888;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .error {
+            color: #e87979;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #49262c;
+            border-radius: 9px;
+        }
+
+        .success {
+            color: #65d6a6;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #183b30;
+            border-radius: 9px;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 18px;
+            }
+
+            header {
+                flex-wrap: wrap;
+            }
+
+            .actions {
+                grid-template-columns: 1fr;
+            }
+
+            .balance {
+                font-size: 32px;
+            }
+
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <header>
+
+            <div class="logo">NOVA BANK</div>
+
+            <div class="account">
+                Personal Account
+            </div>
+
+            <a href="/logout" class="logout">
+                Logout
+            </a>
+
+        </header>
+
+
+        <!-- BALANCE -->
+
+        <section class="balance-card">
+
+            <p>Total Balance</p>
+
+            <div class="balance">
+                ${{ balance }}
+                <span class="currency">USD</span>
+            </div>
+
+        </section>
+
+
+        <!-- ACTIONS -->
+
+        <section class="actions">
+
+            <div class="action-card">
+
+                <h2>Deposit</h2>
+
+                <p>Add money to your account</p>
+
+                <button
+                    class="deposit"
+                    type="button"
+                    onclick="showForm('deposit')">
+
+                    + Deposit Money
+
+                </button>
+
+            </div>
+
+
+            <div class="action-card">
+
+                <h2>Withdraw</h2>
+
+                <p>Take money from your account</p>
+
+                <button
+                    class="withdraw"
+                    type="button"
+                    onclick="showForm('withdraw')">
+
+                    - Withdraw Money
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- MONEY FORM -->
+
+        <div
+            id="moneyForm"
+            class="action-card"
+            style="display: none;">
+
+            <h2 id="formTitle">
+                Deposit Money
+            </h2>
+
+            <form method="POST" action="/bank">
+
+                <input
+                    type="hidden"
+                    name="action"
+                    id="actionType"
+                >
+
+                <input
+                    type="number"
+                    id="amountInput"
+                    name="amount"
+                    class="money-input"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="Enter amount in USD"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    id="confirmButton"
+                    class="deposit">
+
+                    Confirm Transaction
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- MESSAGES -->
+
+        {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        {% if message %}
+
+            <div class="success">
+                {{ message }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- TRANSACTION HISTORY -->
+
+        <section class="transactions">
+
+            <h2>Recent Transactions</h2>
+
+            {% if transactions %}
+
+                {% for transaction in transactions %}
+
+                    <div class="transaction-row">
+
+                        <span>
+                            {{ transaction.type }}
+                        </span>
+
+                        {% if transaction.type == "Deposit" %}
+
+                            <span style="color:#65d6a6;">
+                                +${{ "%.2f"|format(transaction.amount) }}
+                            </span>
+
+                        {% else %}
+
+                            <span style="color:#e87979;">
+                                -${{ "%.2f"|format(transaction.amount) }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    No transactions yet.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        function showForm(type) {
+
+            const form = document.getElementById("moneyForm");
+
+            const input = document.getElementById("amountInput");
+
+            const action = document.getElementById("actionType");
+
+            const title = document.getElementById("formTitle");const button = document.getElementById("confirmButton");
+
+
+            form.style.display = "block";
+
+            input.value = "";
+
+            action.value = type;
+
+
+            if (type === "deposit") {
+
+                title.innerText = "Deposit Money";
+
+                button.className = "deposit";
+
+            } else {
+
+                title.innerText = "Withdraw Money";
+
+                button.className = "withdraw";
+
+            }
+
+
+            input.focus();
+
+            form.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }
+
+    </script>
+
+</body>
+</html>
